@@ -1,0 +1,193 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Soil AI RESTful API",
+        "version": "1",
+        "description": "OpenAPI for Soil AI RESTful API"
+    },
+    "servers": [
+        {
+            "description": "Soil AI API Server",
+            "url": "https://{environment}/api/",
+            "variables": {
+                "environment": {
+                    "description": "Server Environment",
+                    "default": "127.0.0.1:8000",
+                    "enum": ["127.0.0.1:8000", "api.hcorp.my.id"]
+                }
+            }
+        }
+    ],
+    "paths": {
+        "/get_collect_data": {
+            "get": {
+                "tags": ["HTTP: Collect Data"],
+                "summary": "Get all collect data",
+                "description": "Get all active collect data, with optional filtering by temperature, air humidity, etc.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "ID of the collect data to filter by",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "temperature",
+                        "in": "query",
+                        "description": "Temperature to filter the data by",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "air_humidity",
+                        "in": "query",
+                        "description": "Air humidity to filter the data by",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "soil_humidity",
+                        "in": "query",
+                        "description": "Soil humidity to filter the data by",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "light",
+                        "in": "query",
+                        "description": "Light level to filter the data by",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved collect data",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "description": "Example success get all collect data",
+                                        "value": [
+                                            {
+                                                "id": 1,
+                                                "temperature": 92.0,
+                                                "air_humidity": 12.0,
+                                                "soil_humidity": 234.0,
+                                                "light": 111.0
+                                            },
+                                            {
+                                                "id": 2,
+                                                "temperature": 14.0,
+                                                "air_humidity": 45.0,
+                                                "soil_humidity": 81.0,
+                                                "light": 77.0
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/send_collect_data": {
+            "post": {
+                "tags": ["HTTP: Collect Data"],
+                "summary": "Send new collect data",
+                "description": "Send new collect data entry to the database",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CollectData"
+                            },
+                            "examples": {
+                                "data": {
+                                    "description": "Example create collect data",
+                                    "value": {
+                                        "temperature": 25.0,
+                                        "air_humidity": 60.0,
+                                        "soil_humidity": 40.0,
+                                        "light": 300.0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successfully created collect data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CollectData"
+                                },
+                                "examples": {
+                                    "data": {
+                                        "description": "Successfully created collect data",
+                                        "value": {
+                                            "data": {
+                                                "status": "success",
+                                                "message": "Send to collect data succesfully"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CollectData": {
+                "type": "object",
+                "properties": {
+                    "temperature": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "air_humidity": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "soil_humidity": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "light": {
+                        "type": "number",
+                        "format": "float"
+                    }
+                },
+                "required": [
+                    "temperature",
+                    "air_humidity",
+                    "soil_humidity",
+                    "light"
+                ]
+            }
+        }
+    }
+}

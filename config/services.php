@@ -35,4 +35,6 @@ return [
         ],
     ],
 
+    // MQTT configuration
+
 ];
