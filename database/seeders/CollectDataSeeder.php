@@ -14,7 +14,6 @@ class CollectDataSeeder extends Seeder
      */
     public function run()
     {
-        // Gunakan factory untuk membuat 50 data
         CollectData::factory(50)->create();
     }
 }

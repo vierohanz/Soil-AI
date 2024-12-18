@@ -25,11 +25,12 @@ class CollectDataFactory extends Factory
     public function definition(): array
     {
         return [
-            // Menghasilkan nilai acak untuk kolom yang ditentukan
-            'temperature' => $this->faker->numberBetween(20, 40),  // temperature acak antara 20-40
-            'air_humidity' => $this->faker->numberBetween(30, 70),  // air_humidity acak antara 30-70
-            'soil_humidity' => $this->faker->numberBetween(10, 50), // soil_humidity acak antara 10-50
-            'light' => $this->faker->numberBetween(100, 1000),      // light acak antara 100-1000
+            'temperature' => $this->faker->numberBetween(20, 40),
+            'air_humidity' => $this->faker->numberBetween(30, 70),
+            'soil_humidity' => $this->faker->numberBetween(10, 50),
+            'light' => $this->faker->numberBetween(100, 1000),
+            'created_at' => now()->subDays(rand(0, 50)),
+            'updated_at' => now()->addDays(rand(0, 50)),
         ];
     }
 }

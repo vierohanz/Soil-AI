@@ -20,9 +20,4 @@ class CollectData extends Model
     protected $keyType = 'int';
     public $incrementing = true;
     public $timestamps = true;
-
-    public function averageDaily(): HasMany
-    {
-        return $this->HasMany(AverageDaily::class, 'collect_id', 'id');
-    }
 }

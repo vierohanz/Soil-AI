@@ -3,7 +3,7 @@
     "info": {
         "title": "Soil AI RESTful API",
         "version": "1",
-        "description": "OpenAPI for Soil AI RESTful API"
+        "description": "OpenAPI for Soil AI RESTful API with MQTT functionality"
     },
     "servers": [
         {
@@ -21,7 +21,7 @@
     "paths": {
         "/get_collect_data": {
             "get": {
-                "tags": ["HTTP: Collect Data"],
+                "tags": ["HTTP"],
                 "summary": "Get all collect data",
                 "description": "Get all active collect data, with optional filtering by temperature, air humidity, etc.",
                 "parameters": [
@@ -109,7 +109,7 @@
         },
         "/send_collect_data": {
             "post": {
-                "tags": ["HTTP: Collect Data"],
+                "tags": ["HTTP"],
                 "summary": "Send new collect data",
                 "description": "Send new collect data entry to the database",
                 "requestBody": {
@@ -147,7 +147,190 @@
                                         "value": {
                                             "data": {
                                                 "status": "success",
-                                                "message": "Send to collect data succesfully"
+                                                "message": "Send to collect data successfully"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get_average_daily": {
+            "get": {
+                "tags": ["HTTP"],
+                "summary": "Get average daily data",
+                "description": "Get average daily data within the specified date range.",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Start date for the data range (YYYY-MM-DD)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "End date for the data range (YYYY-MM-DD)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved average daily data",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "description": "Example success response",
+                                        "value": [
+                                            {
+                                                "date": "2024-01-12",
+                                                "average_temperature": 25.5,
+                                                "average_air_humidity": 60.2,
+                                                "average_soil_humidity": 45.8,
+                                                "average_light": 300.0
+                                            },
+                                            {
+                                                "date": "2024-01-13",
+                                                "average_temperature": 26.0,
+                                                "average_air_humidity": 58.0,
+                                                "average_soil_humidity": 47.0,
+                                                "average_light": 305.0
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No data found for the specified date range",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "error": {
+                                        "description": "Example error response",
+                                        "value": {
+                                            "status": "error",
+                                            "message": "No average daily data found for the specified date range."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mqtt_subscribe": {
+            "post": {
+                "tags": ["MQTT"],
+                "summary": "Subscribe to an MQTT topic",
+                "description": "Subscribe to a specified MQTT topic to start receiving messages.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "topic": {
+                                        "type": "string",
+                                        "example": "collect/data",
+                                        "description": "The MQTT topic to subscribe to"
+                                    }
+                                },
+                                "required": ["topic"]
+                            },
+                            "examples": {
+                                "data": {
+                                    "description": "Example subscribe to MQTT topic",
+                                    "value": {
+                                        "topic": "collect/data"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Successfully subscribed to the topic",
+                            "content": {
+                                "application/json": {
+                                    "examples": {
+                                        "success": {
+                                            "description": "Successfully subscribed",
+                                            "value": {
+                                                "status": "success",
+                                                "message": "Successfully subscribed to collect/data"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mqtt_publish": {
+            "post": {
+                "tags": ["MQTT"],
+                "summary": "Publish a message to an MQTT topic",
+                "description": "Publish a message to a specified MQTT topic.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "topic": {
+                                        "type": "string",
+                                        "example": "collect/data",
+                                        "description": "The MQTT topic to publish to"
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "example": "{\"temperature\": 25.0, \"air_humidity\": 60.0}",
+                                        "description": "The message to send"
+                                    }
+                                },
+                                "required": ["topic", "message"]
+                            },
+                            "examples": {
+                                "data": {
+                                    "description": "Example publish to MQTT topic",
+                                    "value": {
+                                        "topic": "collect/data",
+                                        "message": "{\"temperature\": 25.0, \"air_humidity\": 60.0, \"soil_humidity\": 223.0, \"light\": 1260.0}"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Successfully published the message",
+                            "content": {
+                                "application/json": {
+                                    "examples": {
+                                        "success": {
+                                            "description": "Successfully published message",
+                                            "value": {
+                                                "status": "success",
+                                                "message": "Message published to collect/data"
                                             }
                                         }
                                     }
