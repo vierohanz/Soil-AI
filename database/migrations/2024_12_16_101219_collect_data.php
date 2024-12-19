@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('collect_data', function (Blueprint $table) {
             $table->id();
-            $table->decimal('temperature', 8, 2)->nullable(false);
-            $table->decimal('air_humidity', 8, 2)->nullable(false);
-            $table->decimal('soil_humidity', 8, 2)->nullable(false);
-            $table->decimal('light', 8, 2)->nullable(false);
+            $table->decimal('temperature', 8, 2)->nullable(false)->default(0.0);
+            $table->decimal('air_humidity', 8, 2)->nullable(false)->default(0.0);
+            $table->decimal('soil_humidity', 8, 2)->nullable(false)->default(0.0);
+            $table->decimal('light', 8, 2)->nullable(false)->default(0.0);
             $table->timestamps();
         });
     }

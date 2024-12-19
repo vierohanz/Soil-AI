@@ -131,23 +131,23 @@
                                 }
                             }
                         }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Successfully created collect data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/CollectData"
-                                },
-                                "examples": {
-                                    "data": {
-                                        "description": "Successfully created collect data",
-                                        "value": {
-                                            "data": {
-                                                "status": "success",
-                                                "message": "Send to collect data successfully"
+                    },
+                    "responses": {
+                        "201": {
+                            "description": "Successfully created collect data",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/CollectData"
+                                    },
+                                    "examples": {
+                                        "data": {
+                                            "description": "Successfully created collect data",
+                                            "value": {
+                                                "data": {
+                                                    "status": "success",
+                                                    "message": "Send to collect data successfully"
+                                                }
                                             }
                                         }
                                     }
@@ -340,6 +340,120 @@
                     }
                 }
             }
+        },
+        "/send_message": {
+            "post": {
+                "tags": ["HTTP"],
+                "summary": "Send a message",
+                "description": "Send a message and receive a response.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "The plant is dry",
+                                        "description": "The message content to send"
+                                    }
+                                },
+                                "required": ["message"]
+                            },
+                            "examples": {
+                                "data": {
+                                    "description": "Example message",
+                                    "value": {
+                                        "message": "The plant is dry"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Message sent successfully",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "description": "Successfully sent message",
+                                        "value": {
+                                            "status": "success",
+                                            "message": "Send to Artificial Intellegence successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid message format",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "error": {
+                                        "description": "Error response for invalid message format",
+                                        "value": {
+                                            "status": "error",
+                                            "message": "Invalid message format"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error response when no average data is found.",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "error": {
+                                        "description": "Error response when no average data is found",
+                                        "value": {
+                                            "status": "error",
+                                            "message": "No average data found for today."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        "/get_message_data": {
+            "get": {
+                "tags": ["HTTP"],
+                "summary": "Get a message",
+                "description": "Retrieve a message and its details.",
+                "responses": {
+                    "200": {
+                        "description": "Message retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "description": "Successfully retrieved message",
+                                        "value": {
+                                            "data": [
+                                                "id": 1,
+                                                "message": "The plant is dry",
+                                                "average_id": 1,
+                                                "created_at": "2024-12-19T10:00:00Z",
+                                                "updated_at": "2024-12-19T10:00:00Z"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -349,19 +463,23 @@
                 "properties": {
                     "temperature": {
                         "type": "number",
-                        "format": "float"
+                        "format": "float",
+                        "example": 25.0
                     },
                     "air_humidity": {
                         "type": "number",
-                        "format": "float"
+                        "format": "float",
+                        "example": 60.0
                     },
                     "soil_humidity": {
                         "type": "number",
-                        "format": "float"
+                        "format": "float",
+                        "example": 40.0
                     },
                     "light": {
                         "type": "number",
-                        "format": "float"
+                        "format": "float",
+                        "example": 300.0
                     }
                 },
                 "required": [

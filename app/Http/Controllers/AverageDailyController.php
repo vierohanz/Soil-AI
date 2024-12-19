@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AverageDailyRequest;
 use App\Http\Resources\AverageDailyResources;
+use App\Http\Resources\GetAverageDailyResources;
 use App\Models\AverageDaily;
 use App\Models\CollectData;
 use Carbon\Carbon;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class AverageDailyController extends Controller
 {
-    public function getAverageDaily(AverageDailyRequest $request)
+    public function GetAverageDaily(AverageDailyRequest $request)
     {
         $validated = $request->validated();
         $startDate = $validated['start_date'];
@@ -27,6 +28,6 @@ class AverageDailyController extends Controller
             ], 404);
         }
 
-        return AverageDailyResources::collection($averageData);
+        return GetAverageDailyResources::collection($averageData);
     }
 }

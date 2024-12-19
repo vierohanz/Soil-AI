@@ -14,7 +14,7 @@ class MqttListener extends Command
 
     public function handle()
     {
-        $host = env('MQTT_BROKER_HOST', '127.0.0.1');
+        $host = env('MQTT_BROKER_HOST', '192.168.1.3');
         $port = env('MQTT_BROKER_PORT', 1883);
         $clientId = env('MQTT_CLIENT_ID', 'soilai17');
 
@@ -29,7 +29,6 @@ class MqttListener extends Command
             $mqtt->connect($connectionSettings);
             echo "Connected to MQTT Broker!" . PHP_EOL;
 
-            // Subscribe to topic
             $mqtt->subscribe('collect/data', function (string $topic, string $message) {
                 echo "Received message: " . $message . PHP_EOL;
 

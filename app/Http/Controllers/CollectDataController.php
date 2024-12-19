@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CollectDataRequest;
+use App\Http\Resources\GetAllCollectDataResources;
 use App\Http\Resources\GetAllDataResources;
 use App\Http\Resources\SendCollectDataResources;
 use App\Models\AverageDaily;
@@ -48,7 +49,7 @@ class CollectDataController extends Controller
         }
         $data = $query->get();
 
-        return GetAllDataResources::collection($data);
+        return GetAllCollectDataResources::collection($data);
     }
 
     public function SaveDailyAverage()
