@@ -13,8 +13,7 @@ class AverageDaily extends Model
         'date',
         'avg_temperature',
         'avg_air_humidity',
-        'avg_soil_humidity',
-        'avg_light',
+        'avg_soil_humidity'
     ];
     protected $table = 'average_daily';
     protected $primaryKey = 'id';

@@ -22,7 +22,6 @@ class CollectDataController extends Controller
             'temperature' => $validated['temperature'],
             'air_humidity' => $validated['air_humidity'],
             'soil_humidity' => $validated['soil_humidity'],
-            'light' => $validated['light'],
         ]);
         $this->SaveDailyAverage();
 
@@ -44,9 +43,6 @@ class CollectDataController extends Controller
         if ($soil_humidity = request()->query('soil_humidity')) {
             $query->where('soil_humidity', $soil_humidity);
         }
-        if ($light = request()->query('light')) {
-            $query->where('light', $light);
-        }
         $data = $query->get();
 
         return GetAllCollectDataResources::collection($data);
@@ -67,8 +63,7 @@ class CollectDataController extends Controller
                     ->select(
                         DB::raw('AVG(temperature) as avg_temperature'),
                         DB::raw('AVG(air_humidity) as avg_air_humidity'),
-                        DB::raw('AVG(soil_humidity) as avg_soil_humidity'),
-                        DB::raw('AVG(light) as avg_light')
+                        DB::raw('AVG(soil_humidity) as avg_soil_humidity')
                     )
                     ->first();
 
@@ -77,8 +72,7 @@ class CollectDataController extends Controller
                         'date' => $dateValue,
                         'avg_temperature' => $averages->avg_temperature,
                         'avg_air_humidity' => $averages->avg_air_humidity,
-                        'avg_soil_humidity' => $averages->avg_soil_humidity,
-                        'avg_light' => $averages->avg_light,
+                        'avg_soil_humidity' => $averages->avg_soil_humidity
                     ]);
                 }
             }

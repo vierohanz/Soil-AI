@@ -16,7 +16,6 @@ return new class extends Migration
             $table->decimal('temperature', 8, 2)->nullable(false)->default(0.0);
             $table->decimal('air_humidity', 8, 2)->nullable(false)->default(0.0);
             $table->decimal('soil_humidity', 8, 2)->nullable(false)->default(0.0);
-            $table->decimal('light', 8, 2)->nullable(false)->default(0.0);
             $table->timestamps();
         });
     }

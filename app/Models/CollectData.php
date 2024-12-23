@@ -13,7 +13,6 @@ class CollectData extends Model
         'temperature',
         'air_humidity',
         'soil_humidity',
-        'light',
     ];
     protected $table = 'collect_data';
     protected $primaryKey = 'id';

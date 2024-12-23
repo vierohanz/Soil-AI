@@ -14,7 +14,7 @@ class MqttListener extends Command
 
     public function handle()
     {
-        $host = env('MQTT_BROKER_HOST', '192.168.10.97');
+        $host = env('MQTT_BROKER_HOST', '103.217.145.84');
         $port = env('MQTT_BROKER_PORT', 1883);
         $clientId = env('MQTT_CLIENT_ID', 'soilai17');
 
@@ -39,7 +39,6 @@ class MqttListener extends Command
                         'temperature' => $data['temperature'],
                         'air_humidity' => $data['air_humidity'],
                         'soil_humidity' => $data['soil_humidity'],
-                        'light' => $data['light'],
                     ]);
                     echo "Data saved to database: " . json_encode($data) . PHP_EOL;
                 } else {
