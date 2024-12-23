@@ -14,7 +14,7 @@ class MqttListener extends Command
 
     public function handle()
     {
-        $host = env('MQTT_BROKER_HOST', '103.217.145.84');
+        $host = env('MQTT_BROKER_HOST', 'soilapi.hcorp.my.id');
         $port = env('MQTT_BROKER_PORT', 1883);
         $clientId = env('MQTT_CLIENT_ID', 'soilai17');
 
