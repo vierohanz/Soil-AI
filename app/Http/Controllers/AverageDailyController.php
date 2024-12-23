@@ -30,4 +30,6 @@ class AverageDailyController extends Controller
 
         return GetAverageDailyResources::collection($averageData);
     }
+
+    
 }
