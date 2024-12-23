@@ -19,7 +19,6 @@ class GetAllCollectDataResources extends JsonResource
             'temperature' => $this->temperature,
             'air_humidity' => $this->air_humidity,
             'soil_humidity' => $this->soil_humidity,
-            'light' => $this->light,
         ];
     }
 }

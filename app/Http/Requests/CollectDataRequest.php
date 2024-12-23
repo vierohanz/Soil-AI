@@ -28,7 +28,6 @@ class CollectDataRequest extends FormRequest
             'temperature' => 'required|regex:/^\d+(\.\d{1,2})?$/',
             'air_humidity' => 'required|regex:/^\d+(\.\d{1,2})?$/',
             'soil_humidity' => 'required|regex:/^\d+(\.\d{1,2})?$/',
-            'light' => 'required|regex:/^\d+(\.\d{1,2})?$/',
         ];
     }
 
@@ -38,7 +37,7 @@ class CollectDataRequest extends FormRequest
             'temperature.regex' => 'Temperature should be a number with up to 2 decimal places.',
             'air_humidity.regex' => 'Air Humidity should be a number with up to 2 decimal places.',
             'soil_humidity.regex' => 'Soil Humidity should be a number with up to 2 decimal places.',
-            'light.regex' => 'Light should be a number with up to 2 decimal places.',
+
         ];
     }
 

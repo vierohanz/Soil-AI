@@ -19,7 +19,6 @@ class GetAverageDailyResources extends JsonResource
             'avg_temperature' => $this->avg_temperature,
             'avg_air_humidity' => $this->avg_air_humidity,
             'avg_soil_humidity' => $this->avg_soil_humidity,
-            'avg_light' => $this->avg_light,
         ];
     }
 }
