@@ -51,7 +51,32 @@ class ArtificialIntellegenceController extends Controller
             $query->where('average_id', $average_id);
         }
         $data = $query->get();
+        if ($data->isEmpty() || $data->every(function ($item) {
+            return is_null($item->message) || is_null($item->average_id);
+        })) {
+            return response()->json([
+                'error' => [
+                    'status' => 'error',
+                    'message' => 'No message data found for today.',
+                ]
+            ], 404);
+        }
 
         return GetMessageDataResources::collection($data);
+    }
+
+    public function GetLatestMessageData()
+    {
+        $data = ArtificialIntellegence::orderBy('created_at', 'desc')->first();
+        if (!$data) {
+            return response()->json([
+                'error' => [
+                    'status' => 'error',
+                    'message' => 'No latest message data found.',
+                ]
+            ], 404);
+        }
+
+        return new GetMessageDataResources($data);
     }
 }

@@ -13,3 +13,4 @@ Route::get('/get_collect_data', [CollectDataController::class, 'GetAllCollectDat
 Route::get('/get_average_daily', [AverageDailyController::class, 'GetAverageDaily']);
 Route::post('/send_message', [ArtificialIntellegenceController::class, 'SendMessage']);
 Route::get('/get_message_data', [ArtificialIntellegenceController::class, 'GetMessageData']);
+Route::get('/get_message_latest', [ArtificialIntellegenceController::class, 'GetLatestMessageData']);
