@@ -145,7 +145,7 @@
                 }
             }
         },
-        "/get_average_daily": {
+        "/get_range_average_daily": {
             "get": {
                 "tags": ["HTTP"],
                 "summary": "Get average daily data",
@@ -211,6 +211,59 @@
                                         "value": {
                                             "status": "error",
                                             "message": "No average daily data found for the specified date range."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get_all_average_daily": {
+            "get": {
+                "tags": ["HTTP"],
+                "summary": "Get average daily data",
+                "description": "Get all average daily data.",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved average daily data",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "description": "Example success response",
+                                        "value": [
+                                            {
+                                                "date": "2024-01-12",
+                                                "average_temperature": 25.5,
+                                                "average_air_humidity": 60.2,
+                                                "average_soil_humidity": 45.8,
+                                                "average_light": 300.0
+                                            },
+                                            {
+                                                "date": "2024-01-13",
+                                                "average_temperature": 26.0,
+                                                "average_air_humidity": 58.0,
+                                                "average_soil_humidity": 47.0,
+                                                "average_light": 305.0
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No data found ",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "error": {
+                                        "description": "Example error response",
+                                        "value": {
+                                            "status": "error",
+                                            "message": "No data found."
                                         }
                                     }
                                 }
