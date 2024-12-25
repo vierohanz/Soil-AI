@@ -19,6 +19,8 @@ class GetAllCollectDataResources extends JsonResource
             'temperature' => $this->temperature,
             'air_humidity' => $this->air_humidity,
             'soil_humidity' => $this->soil_humidity,
+            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d\TH:i:s') : '',
+            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d\TH:i:s') : ''
         ];
     }
 }
