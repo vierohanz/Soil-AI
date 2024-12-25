@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE', 'UTC'),
+    'timezone' => env('APP_TIMEZONE', 'Asia/Jakarta'),
 
     /*
     |--------------------------------------------------------------------------
@@ -94,7 +94,7 @@ return [
     | are secure. You should do this prior to deploying the application.
     |
     */
-
+    'timezone' => 'Asia/Jakarta',
     'cipher' => 'AES-256-CBC',
 
     'key' => env('APP_KEY'),

@@ -76,7 +76,6 @@ class ArtificialIntellegenceController extends Controller
                 ]
             ], 404);
         }
-
         return new GetMessageDataResources($data);
     }
 }

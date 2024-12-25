@@ -8,6 +8,7 @@ use App\Http\Resources\GetAllDataResources;
 use App\Http\Resources\SendCollectDataResources;
 use App\Models\AverageDaily;
 use App\Models\CollectData;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -46,6 +47,36 @@ class CollectDataController extends Controller
         $data = $query->get();
 
         return GetAllCollectDataResources::collection($data);
+    }
+
+    public function GetTodayCollectData()
+    {
+        $today = Carbon::today();
+        $data = CollectData::whereDate('created_at', $today)->orderBy('created_at', 'desc')->get();
+
+        if (!$data) {
+            return response()->json([
+                'error' => [
+                    'status' => 'error',
+                    'message' => 'No message data found for today.',
+                ]
+            ], 404);
+        }
+        return  GetAllCollectDataResources::collection($data);
+    }
+
+    public function GetLatestCollectData()
+    {
+        $data = CollectData::orderBy('created_at', 'desc')->first();
+        if (!$data) {
+            return response()->json([
+                'error' => [
+                    'status' => 'error',
+                    'message' => 'No latest collect data data found.',
+                ]
+            ], 404);
+        }
+        return new GetAllCollectDataResources($data);
     }
 
     public function SaveDailyAverage()

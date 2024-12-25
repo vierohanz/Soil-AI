@@ -95,6 +95,41 @@
                 }
             }
         },
+        "/get_today_collect_data": {
+            "get": {
+                "tags": ["HTTP"],
+                "summary": "Get today collect data",
+                "description": "Get today active collect data, with optional filtering by temperature, air humidity, etc.",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved collect data",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "description": "Example success get today collect data",
+                                        "value": [
+                                            {
+                                                "id": 1,
+                                                "temperature": 92.0,
+                                                "air_humidity": 12.0,
+                                                "soil_humidity": 234.0
+                                            },
+                                            {
+                                                "id": 2,
+                                                "temperature": 14.0,
+                                                "air_humidity": 45.0,
+                                                "soil_humidity": 81.0
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/send_collect_data": {
             "post": {
                 "tags": ["HTTP"],
