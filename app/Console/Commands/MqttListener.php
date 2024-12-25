@@ -36,7 +36,7 @@ class MqttListener extends Command
                 $data = json_decode($message, true);
 
                 if ($data) {
-                    // Jika created_at ada, ubah zona waktu ke Asia/Jakarta
+                    // Mengonversi waktu ke Asia/Jakarta jika diperlukan
                     $createdAt = isset($data['created_at'])
                         ? Carbon::parse($data['created_at'])->timezone('Asia/Jakarta')  // Konversi waktu
                         : Carbon::now('Asia/Jakarta');  // Gunakan waktu saat ini jika tidak ada created_at
