@@ -83,7 +83,7 @@ class CollectDataController extends Controller
     {
         $dates = CollectData::selectRaw('DATE(created_at) as date')
             ->groupBy(DB::raw('DATE(created_at)'))
-            ->havingRaw('COUNT(*) >= 2')
+            ->havingRaw('COUNT(*) == 2')
             ->get();
         foreach ($dates as $date) {
             $dateValue = $date->date;
