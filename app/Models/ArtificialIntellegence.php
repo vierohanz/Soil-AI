@@ -20,6 +20,6 @@ class ArtificialIntellegence extends Model
 
     public function averageDaily()
     {
-        return $this->belongsTo(AverageDaily::class, 'average_id');
+        return $this->belongsTo(CollectData::class, 'month_id');
     }
 }
