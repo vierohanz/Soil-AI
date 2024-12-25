@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 use App\Models\CollectData;
+use Carbon\Carbon;
 
 class MqttListener extends Command
 {
@@ -35,10 +36,20 @@ class MqttListener extends Command
                 $data = json_decode($message, true);
 
                 if ($data) {
+                    $createdAt = isset($data['created_at'])
+                        ? Carbon::parse($data['created_at'])->timezone('Asia/Jakarta')
+                        : Carbon::now('Asia/Jakarta');
+
+                    $updatedAt = isset($data['updated_at'])
+                        ? Carbon::parse($data['updated_at'])->timezone('Asia/Jakarta')
+                        : Carbon::now('Asia/Jakarta');
+
                     CollectData::create([
                         'temperature' => $data['temperature'],
                         'air_humidity' => $data['air_humidity'],
                         'soil_humidity' => $data['soil_humidity'],
+                        'created_at' => $createdAt,
+                        'updated_at' => $updatedAt,
                     ]);
                     echo "Data saved to database: " . json_encode($data) . PHP_EOL;
                 } else {
