@@ -2,11 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Models\AverageDaily;
 use Illuminate\Console\Command;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 use App\Models\CollectData;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MqttListener extends Command
 {
@@ -42,6 +45,7 @@ class MqttListener extends Command
                         'soil_humidity' => $data['soil_humidity'],
                     ]);
                     echo "Data saved to database: " . json_encode($data) . PHP_EOL;
+                    $this->SaveDailyAverage();
                 } else {
                     echo "Invalid message format: " . $message . PHP_EOL;
                 }
@@ -51,6 +55,37 @@ class MqttListener extends Command
             $mqtt->loop(true);
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage() . PHP_EOL;
+        }
+    }
+
+    public function SaveDailyAverage()
+    {
+        $dates = CollectData::selectRaw('DATE(created_at) as date')
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->havingRaw('COUNT(*) >= 2')
+            ->get();
+        foreach ($dates as $date) {
+            $dateValue = $date->date;
+
+            Log::info("Processing date: $dateValue");
+            if (!AverageDaily::where('date', $dateValue)->exists()) {
+                $averages = CollectData::whereDate('created_at', $dateValue)
+                    ->select(
+                        DB::raw('AVG(temperature) as avg_temperature'),
+                        DB::raw('AVG(air_humidity) as avg_air_humidity'),
+                        DB::raw('AVG(soil_humidity) as avg_soil_humidity')
+                    )
+                    ->first();
+
+                if ($averages) {
+                    AverageDaily::create([
+                        'date' => $dateValue,
+                        'avg_temperature' => $averages->avg_temperature,
+                        'avg_air_humidity' => $averages->avg_air_humidity,
+                        'avg_soil_humidity' => $averages->avg_soil_humidity
+                    ]);
+                }
+            }
         }
     }
 }
