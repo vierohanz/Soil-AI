@@ -18,14 +18,16 @@ class CollectDataController extends Controller
     public function SendCollectData(CollectDataRequest $request): SendCollectDataResources
     {
         $validated = $request->validated();
+        $now = Carbon::now('Asia/Jakarta');
 
         $collectData = CollectData::create([
             'temperature' => $validated['temperature'],
             'air_humidity' => $validated['air_humidity'],
             'soil_humidity' => $validated['soil_humidity'],
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
         $this->SaveDailyAverage();
-
         return new SendCollectDataResources($collectData);
     }
 
