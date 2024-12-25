@@ -51,7 +51,6 @@ class MqttListener extends Command
                 }
             }, 0);
 
-            // Start listening
             $mqtt->loop(true);
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage() . PHP_EOL;
@@ -62,12 +61,15 @@ class MqttListener extends Command
     {
         $dates = CollectData::selectRaw('DATE(created_at) as date')
             ->groupBy(DB::raw('DATE(created_at)'))
-            ->havingRaw('COUNT(*) >= 2')
+            ->havingRaw('COUNT(*) >= 280')
             ->get();
+
         foreach ($dates as $date) {
             $dateValue = $date->date;
 
             Log::info("Processing date: $dateValue");
+
+            // Cek apakah sudah ada data rata-rata untuk tanggal ini
             if (!AverageDaily::where('date', $dateValue)->exists()) {
                 $averages = CollectData::whereDate('created_at', $dateValue)
                     ->select(
@@ -84,6 +86,8 @@ class MqttListener extends Command
                         'avg_air_humidity' => $averages->avg_air_humidity,
                         'avg_soil_humidity' => $averages->avg_soil_humidity
                     ]);
+
+                    Log::info("Average data created for date: $dateValue");
                 }
             }
         }

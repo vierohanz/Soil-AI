@@ -29,6 +29,37 @@ class CollectDataController extends Controller
         return new SendCollectDataResources($collectData);
     }
 
+    public function SaveDailyAverage()
+    {
+        $dates = CollectData::selectRaw('DATE(created_at) as date')
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->havingRaw('COUNT(*) >= 2')
+            ->get();
+        foreach ($dates as $date) {
+            $dateValue = $date->date;
+
+            Log::info("Processing date: $dateValue");
+            if (!AverageDaily::where('date', $dateValue)->exists()) {
+                $averages = CollectData::whereDate('created_at', $dateValue)
+                    ->select(
+                        DB::raw('AVG(temperature) as avg_temperature'),
+                        DB::raw('AVG(air_humidity) as avg_air_humidity'),
+                        DB::raw('AVG(soil_humidity) as avg_soil_humidity')
+                    )
+                    ->first();
+
+                if ($averages) {
+                    AverageDaily::create([
+                        'date' => $dateValue,
+                        'avg_temperature' => $averages->avg_temperature,
+                        'avg_air_humidity' => $averages->avg_air_humidity,
+                        'avg_soil_humidity' => $averages->avg_soil_humidity
+                    ]);
+                }
+            }
+        }
+    }
+
     public function GetAllCollectData()
     {
         $query = CollectData::query();
@@ -77,36 +108,5 @@ class CollectDataController extends Controller
             ], 404);
         }
         return new GetAllCollectDataResources($data);
-    }
-
-    public function SaveDailyAverage()
-    {
-        $dates = CollectData::selectRaw('DATE(created_at) as date')
-            ->groupBy(DB::raw('DATE(created_at)'))
-            ->havingRaw('COUNT(*) >= 2')
-            ->get();
-        foreach ($dates as $date) {
-            $dateValue = $date->date;
-
-            Log::info("Processing date: $dateValue");
-            if (!AverageDaily::where('date', $dateValue)->exists()) {
-                $averages = CollectData::whereDate('created_at', $dateValue)
-                    ->select(
-                        DB::raw('AVG(temperature) as avg_temperature'),
-                        DB::raw('AVG(air_humidity) as avg_air_humidity'),
-                        DB::raw('AVG(soil_humidity) as avg_soil_humidity')
-                    )
-                    ->first();
-
-                if ($averages) {
-                    AverageDaily::create([
-                        'date' => $dateValue,
-                        'avg_temperature' => $averages->avg_temperature,
-                        'avg_air_humidity' => $averages->avg_air_humidity,
-                        'avg_soil_humidity' => $averages->avg_soil_humidity
-                    ]);
-                }
-            }
-        }
     }
 }
