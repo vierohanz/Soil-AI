@@ -5,7 +5,8 @@ import requests
 import time
 import pandas as pd
 
-model_path = os.path.join(os.getcwd(), 'app', 'AI', 'random_forest_model.joblib')
+# model_path = os.path.join(os.getcwd(), 'app', 'AI', 'random_forest_model.joblib')
+model_path = '/var/www/Soil-AI/app/AI/random_forest_model.joblib'
 
 # Fungsi untuk memuat model
 def load_model():
