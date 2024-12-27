@@ -31,7 +31,6 @@ def get_and_predict(model):
     if response.status_code == 200:
         data = response.json()['data']
 
-
         predictions = []
         all_binary_predictions = []
         all_probabilities = []

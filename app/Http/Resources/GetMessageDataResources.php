@@ -20,8 +20,8 @@ class GetMessageDataResources extends JsonResource
             'prob_tidak_siram' => $this->prob_tidak_siram,
             'prob_siram' => $this->prob_siram,
             'average_id' => $this->average_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d\TH:i:s') : '',
+            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d\TH:i:s') : ''
         ];
     }
 }

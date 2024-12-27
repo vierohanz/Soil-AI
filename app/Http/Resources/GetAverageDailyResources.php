@@ -19,6 +19,8 @@ class GetAverageDailyResources extends JsonResource
             'avg_temperature' => $this->avg_temperature,
             'avg_air_humidity' => $this->avg_air_humidity,
             'avg_soil_humidity' => $this->avg_soil_humidity,
+            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d\TH:i:s') : '',
+            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d\TH:i:s') : ''
         ];
     }
 }
