@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('artificial_intellegence', function (Blueprint $table) {
             $table->id();
             $table->string('message', 30)->nullable();
+            $table->decimal('prob_siram', 8, 2)->nullable();
+            $table->decimal('prob_tidak_siram', 8, 2)->nullable();
             $table->unsignedBigInteger('average_id');
             $table->timestamps();
 

@@ -432,15 +432,31 @@
                                         "type": "string",
                                         "example": "The plant is dry",
                                         "description": "The message content to send"
+                                    },
+                                    "prob_siram": {
+                                        "type": "number",
+                                        "example": 0.75,
+                                        "description": "Probability of watering"
+                                    },
+                                    "prob_tidak_siram": {
+                                        "type": "number",
+                                        "example": 0.25,
+                                        "description": "Probability of not watering"
                                     }
                                 },
-                                "required": ["message"]
+                                "required": [
+                                    "message",
+                                    "prob_siram",
+                                    "prob_tidak_siram"
+                                ]
                             },
                             "examples": {
                                 "data": {
                                     "description": "Example message",
                                     "value": {
-                                        "message": "The plant is dry"
+                                        "message": "The plant is dry",
+                                        "prob_siram": 0.75,
+                                        "prob_tidak_siram": 0.25
                                     }
                                 }
                             }
@@ -457,7 +473,7 @@
                                         "description": "Successfully sent message",
                                         "value": {
                                             "status": "success",
-                                            "message": "Send to Artificial Intellegence successfully"
+                                            "message": "Send to Artificial Intelligence successfully"
                                         }
                                     }
                                 }

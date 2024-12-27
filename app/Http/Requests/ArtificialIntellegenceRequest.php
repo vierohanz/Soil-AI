@@ -23,6 +23,8 @@ class ArtificialIntellegenceRequest extends FormRequest
     {
         return [
             'message' => 'required|string|max:30',
+            'prob_siram' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            'prob_tidak_siram' => 'required|regex:/^\d+(\.\d{1,2})?$/',
         ];
     }
 }

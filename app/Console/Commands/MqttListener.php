@@ -26,70 +26,75 @@ class MqttListener extends Command
             ->setUsername(env('MQTT_BROKER_USERNAME'))
             ->setPassword(env('MQTT_BROKER_PASSWORD'))
             ->setKeepAliveInterval(60)
-            ->setUseTls(false);
+            ->setUseTls(false); // Update based on your broker's security settings
 
         try {
             $mqtt = new MqttClient($host, $port, $clientId);
             $mqtt->connect($connectionSettings);
             echo "Connected to MQTT Broker!" . PHP_EOL;
 
-            $mqtt->subscribe('collect/data', function (string $topic, string $message) {
-                echo "Received message: " . $message . PHP_EOL;
+            $mqtt->subscribe('collect/data', function (string $topic, string $message) use ($mqtt) {
+                try {
+                    $data = json_decode($message, true);
 
-                $data = json_decode($message, true);
+                    if ($data) {
+                        $collectData = CollectData::create([
+                            'temperature' => $data['temperature'],
+                            'air_humidity' => $data['air_humidity'],
+                            'soil_humidity' => $data['soil_humidity'],
+                        ]);
 
-                if ($data) {
-                    CollectData::create([
-                        'temperature' => $data['temperature'],
-                        'air_humidity' => $data['air_humidity'],
-                        'soil_humidity' => $data['soil_humidity'],
-                    ]);
-                    echo "Data saved to database: " . json_encode($data) . PHP_EOL;
-                    $this->SaveDailyAverage();
-                } else {
-                    echo "Invalid message format: " . $message . PHP_EOL;
+                        $this->saveDailyAverage($collectData->created_at);
+                        echo "Data saved to database: " . json_encode($data) . PHP_EOL;
+                    } else {
+                        Log::warning("Invalid message format: " . $message);
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Error processing message: " . $e->getMessage());
                 }
             }, 0);
 
             $mqtt->loop(true);
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage() . PHP_EOL;
+            Log::error("Error connecting to MQTT broker: " . $e->getMessage());
         }
     }
 
-    public function SaveDailyAverage()
+    private function saveDailyAverage(Carbon $timestamp)
     {
-        $dates = CollectData::selectRaw('DATE(created_at) as date')
-            ->groupBy(DB::raw('DATE(created_at)'))
-            ->havingRaw('COUNT(*) >= 280')
-            ->get();
+        $dateValue = $timestamp->toDateString();
+        Log::info("Processing date: $dateValue");
 
-        foreach ($dates as $date) {
-            $dateValue = $date->date;
+        $averages = CollectData::whereDate('created_at', $dateValue)
+            ->select(
+                DB::raw('AVG(temperature) as avg_temperature'),
+                DB::raw('AVG(air_humidity) as avg_air_humidity'),
+                DB::raw('AVG(soil_humidity) as avg_soil_humidity')
+            )
+            ->first();
 
-            Log::info("Processing date: $dateValue");
+        if ($averages) {
+            $existingAverage = AverageDaily::where('date', $dateValue)->first();
 
-            // Cek apakah sudah ada data rata-rata untuk tanggal ini
-            if (!AverageDaily::where('date', $dateValue)->exists()) {
-                $averages = CollectData::whereDate('created_at', $dateValue)
-                    ->select(
-                        DB::raw('AVG(temperature) as avg_temperature'),
-                        DB::raw('AVG(air_humidity) as avg_air_humidity'),
-                        DB::raw('AVG(soil_humidity) as avg_soil_humidity')
-                    )
-                    ->first();
-
-                if ($averages) {
-                    AverageDaily::create([
-                        'date' => $dateValue,
-                        'avg_temperature' => $averages->avg_temperature,
-                        'avg_air_humidity' => $averages->avg_air_humidity,
-                        'avg_soil_humidity' => $averages->avg_soil_humidity
-                    ]);
-
-                    Log::info("Average data created for date: $dateValue");
-                }
+            if ($existingAverage) {
+                $existingAverage->update([
+                    'avg_temperature' => $averages->avg_temperature,
+                    'avg_air_humidity' => $averages->avg_air_humidity,
+                    'avg_soil_humidity' => $averages->avg_soil_humidity,
+                ]);
+                Log::info("Average for $dateValue updated successfully.");
+            } else {
+                AverageDaily::create([
+                    'date' => $dateValue,
+                    'avg_temperature' => $averages->avg_temperature,
+                    'avg_air_humidity' => $averages->avg_air_humidity,
+                    'avg_soil_humidity' => $averages->avg_soil_humidity,
+                ]);
+                Log::info("New average for $dateValue created successfully.");
             }
+        } else {
+            Log::warning("No data found for date $dateValue to calculate averages.");
         }
     }
 }

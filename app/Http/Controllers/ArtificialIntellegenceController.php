@@ -32,6 +32,8 @@ class ArtificialIntellegenceController extends Controller
             ],
             [
                 'message' => $validated['message'],
+                'prob_siram' => $validated['prob_siram'],
+                'prob_tidak_siram' => $validated['prob_tidak_siram'],
             ]
         );
 

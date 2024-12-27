@@ -17,48 +17,69 @@ class CollectDataController extends Controller
 
     public function SendCollectData(CollectDataRequest $request): SendCollectDataResources
     {
+        // Validasi request untuk mengambil data yang diperlukan
         $validated = $request->validated();
 
+        // Simpan data collect yang baru diterima
         $collectData = CollectData::create([
             'temperature' => $validated['temperature'],
             'air_humidity' => $validated['air_humidity'],
             'soil_humidity' => $validated['soil_humidity'],
         ]);
-        $this->SaveDailyAverage();
+
+        // Panggil fungsi untuk menghitung rata-rata harian setelah data dikumpulkan
+        $this->SaveDailyAverage($collectData->created_at);
 
         return new SendCollectDataResources($collectData);
     }
 
-    public function SaveDailyAverage()
+    public function SaveDailyAverage($timestamp)
     {
-        $dates = CollectData::selectRaw('DATE(created_at) as date')
-            ->groupBy(DB::raw('DATE(created_at)'))
-            ->havingRaw('COUNT(*) >= 2')
-            ->get();
-        foreach ($dates as $date) {
-            $dateValue = $date->date;
+        // Ambil tanggal berdasarkan timestamp data yang baru saja disimpan
+        $dateValue = $timestamp->toDateString(); // Mengambil tanggal dari timestamp (format Y-m-d)
 
-            Log::info("Processing date: $dateValue");
-            if (!AverageDaily::where('date', $dateValue)->exists()) {
-                $averages = CollectData::whereDate('created_at', $dateValue)
-                    ->select(
-                        DB::raw('AVG(temperature) as avg_temperature'),
-                        DB::raw('AVG(air_humidity) as avg_air_humidity'),
-                        DB::raw('AVG(soil_humidity) as avg_soil_humidity')
-                    )
-                    ->first();
+        Log::info("Processing date: $dateValue");
 
-                if ($averages) {
-                    AverageDaily::create([
-                        'date' => $dateValue,
-                        'avg_temperature' => $averages->avg_temperature,
-                        'avg_air_humidity' => $averages->avg_air_humidity,
-                        'avg_soil_humidity' => $averages->avg_soil_humidity
-                    ]);
-                }
+        // Hitung rata-rata suhu, kelembapan udara, dan kelembapan tanah untuk tanggal tersebut
+        $averages = CollectData::whereDate('created_at', $dateValue)
+            ->select(
+                DB::raw('AVG(temperature) as avg_temperature'),
+                DB::raw('AVG(air_humidity) as avg_air_humidity'),
+                DB::raw('AVG(soil_humidity) as avg_soil_humidity')
+            )
+            ->first();
+
+        // Pastikan ada data yang ditemukan untuk dihitung rata-ratanya
+        if ($averages) {
+            // Mengecek apakah sudah ada data rata-rata untuk tanggal tersebut
+            $existingAverage = AverageDaily::where('date', $dateValue)->first();
+
+            if ($existingAverage) {
+                // Jika ada, lakukan update pada entri yang sudah ada (hanya untuk hari yang sama)
+                $existingAverage->update([
+                    'avg_temperature' => $averages->avg_temperature,
+                    'avg_air_humidity' => $averages->avg_air_humidity,
+                    'avg_soil_humidity' => $averages->avg_soil_humidity,
+                ]);
+                Log::info("Average for $dateValue updated successfully.");
+            } else {
+                // Jika tidak ada, buat entri baru untuk hari tersebut
+                AverageDaily::create([
+                    'date' => $dateValue,
+                    'avg_temperature' => $averages->avg_temperature,
+                    'avg_air_humidity' => $averages->avg_air_humidity,
+                    'avg_soil_humidity' => $averages->avg_soil_humidity,
+                ]);
+
+                // Log create
+                Log::info("New average for $dateValue created successfully.");
             }
+        } else {
+            // Jika tidak ada data yang ditemukan untuk tanggal tersebut
+            Log::warning("No data found for date $dateValue to calculate averages.");
         }
     }
+
 
     public function GetAllCollectData()
     {

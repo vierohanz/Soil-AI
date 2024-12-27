@@ -10,6 +10,8 @@ class ArtificialIntellegence extends Model
     use HasFactory;
     protected $fillable = [
         'message',
+        'prob_siram',
+        'prob_tidak_siram',
         'average_id'
     ];
     protected $table = 'artificial_intellegence';
